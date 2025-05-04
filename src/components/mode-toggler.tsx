@@ -11,6 +11,7 @@ import {
 } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useIsMounted } from "@/hooks/use-is-mounted";
+import { Button } from "./ui/button";
 
 export function ModeToggler() {
   const { setTheme, theme, resolvedTheme } = useTheme();
@@ -37,12 +38,12 @@ export function ModeToggler() {
   };
 
   React.useLayoutEffect(() => {
-    if (!isMounted) return;
+    if (!isMounted() || !containerRef.current) return;
 
     const container = containerRef.current;
     const activeButton = getCurrentRef();
 
-    if (container && activeButton) {
+    if (activeButton) {
       const containerRect = container.getBoundingClientRect();
       const buttonRect = activeButton.getBoundingClientRect();
 
@@ -52,14 +53,15 @@ export function ModeToggler() {
         100 -
         ((buttonRect.right - containerRect.left) / containerRect.width) * 100;
 
-      clipLeft.set(Math.floor(leftPercent));
-      clipRight.set(Math.floor(rightPercent));
+      clipLeft.set(Math.max(0, Math.floor(leftPercent)));
+      clipRight.set(Math.max(0, Math.floor(rightPercent)));
     }
   }, [theme, resolvedTheme, isMounted]);
 
   if (!isMounted()) {
-    //TODO: Change to a loading skeleton
-    return <div className="fixed top-6 right-6 z-50">loading</div>;
+    return (
+      <div className="fixed top-6 right-6 z-50 h-10 w-[106.67px] rounded-full bg-surface-secondary/50 p-1 shadow-md border border-subtle animate-pulse"></div>
+    );
   }
 
   const filterId = `bg-filter-${resolvedTheme}`;
@@ -103,108 +105,59 @@ export function ModeToggler() {
 
       <div
         ref={containerRef}
-        className="relative flex items-center rounded-3xl bg-surface-secondary shadow-md border border-subtle overflow-hidden"
+        className="relative flex items-center rounded-3xl bg-surface-secondary shadow-md border border-subtle"
       >
         <motion.div
-          className="flex items-center justify-around w-full absolute inset-0 bg-primary z-10"
+          className="flex items-center justify-between absolute inset-0 bg-primary z-10"
           style={{
             clipPath: motionClipPath,
             WebkitClipPath: motionClipPath,
           }}
         >
-          <button
-            className="flex-1 p-2 rounded-3xl focus:outline-none cursor-pointer"
-            aria-label="Switch to light mode"
-          >
-            <Sun
-              className={cn(
-                "w-4 h-4",
-                theme === "light"
-                  ? "text-foreground-on-accent"
-                  : "text-foreground-subtle hover:text-foreground-default"
-              )}
-            />
-          </button>
-
-          <button
-            className="flex-1 p-2 rounded-3xl focus:outline-none cursor-pointer"
-            aria-label="Switch to system theme"
-          >
-            <Monitor
-              className={cn(
-                `w-4 h-4 ${
-                  theme === "system"
-                    ? "text-foreground-on-accent"
-                    : "text-foreground-subtle hover:text-foreground-default"
-                }`
-              )}
-            />
-          </button>
-
-          <button
-            className="flex-1 p-2 rounded-3xl focus:outline-none cursor-pointer"
-            aria-label="Switch to dark mode"
-          >
-            <Moon
-              className={cn(
-                "w-4 h-4",
-                theme === "dark"
-                  ? "text-foreground-on-accent"
-                  : "text-foreground-subtle hover:text-foreground-default"
-              )}
-            />
-          </button>
+          <span className="flex-1 inline-flex justify-center items-center h-8 w-8">
+            <Sun className="w-4 h-4 text-foreground-default" />
+          </span>
+          <span className="flex-1 inline-flex justify-center items-center h-8 w-8">
+            <Monitor className="w-4 h-4 text-foreground-default" />
+          </span>
+          <span className="flex-1 inline-flex justify-center items-center h-8 w-8">
+            <Moon className="w-4 h-4 text-foreground-default" />
+          </span>
         </motion.div>
 
-        <div className="flex items-center justify-around w-full">
-          <button
+        <div className="flex items-center justify-between w-full">
+          <Button
             ref={lightRef}
+            variant="themeToggle"
+            size="icon"
             onClick={() => setTheme("light")}
-            className="flex-1 p-2 rounded-3xl focus:outline-none cursor-pointer"
             aria-label="Switch to light mode"
+            className="flex-1"
           >
-            <Sun
-              className={cn(
-                "w-4 h-4",
-                theme === "light"
-                  ? "text-foreground-on-accent"
-                  : "text-foreground-subtle hover:text-foreground-default"
-              )}
-            />
-          </button>
+            <Sun className="w-4 h-4" />
+          </Button>
 
-          <button
+          <Button
             ref={systemRef}
+            variant="themeToggle"
+            size="icon"
             onClick={() => setTheme("system")}
-            className="flex-1 p-2 rounded-3xl focus:outline-none cursor-pointer"
             aria-label="Switch to system theme"
+            className="flex-1"
           >
-            <Monitor
-              className={cn(
-                `w-4 h-4 ${
-                  theme === "system"
-                    ? "text-foreground-on-accent"
-                    : "text-foreground-subtle hover:text-foreground-default"
-                }`
-              )}
-            />
-          </button>
+            <Monitor className="w-4 h-4" />
+          </Button>
 
-          <button
+          <Button
             ref={darkRef}
+            variant="themeToggle"
+            size="icon"
             onClick={() => setTheme("dark")}
-            className="flex-1 p-2 rounded-3xl focus:outline-none cursor-pointer"
             aria-label="Switch to dark mode"
+            className="flex-1"
           >
-            <Moon
-              className={cn(
-                "w-4 h-4",
-                theme === "dark"
-                  ? "text-foreground-on-accent"
-                  : "text-foreground-subtle hover:text-foreground-default"
-              )}
-            />
-          </button>
+            <Moon className="w-4 h-4" />
+          </Button>
         </div>
       </div>
     </div>
