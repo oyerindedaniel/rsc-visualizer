@@ -2,19 +2,13 @@
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import {
-  SendHorizontal,
-  Loader2,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Info,
-} from "lucide-react";
+import { SendHorizontal, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import type { RSCValidationResult } from "@/services/rsc-detector";
 import logger from "@/utils/logger";
 import { motion, AnimatePresence } from "motion/react";
+import { AnalysisResultsCard } from "../analysis-results-card";
 
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -77,78 +71,12 @@ export default function HomePage() {
     <div className="h-full flex flex-col">
       <div className="flex-grow p-4 overflow-y-auto">
         <div className="flex flex-col items-center h-full gap-6 max-w-2xl mx-auto">
-          <p className="text-foreground-muted text-center mt-20 shrink-0">
+          <p className="text-foreground-muted text-center mt-20 shrink-0 tracking-[-0.03em]">
             Enter a Next.js URL below to begin analysis.
           </p>
 
           <AnimatePresence>
-            {result && !isLoading && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="w-full p-5 border border-subtle rounded-xl bg-surface-secondary/50 shadow-md"
-              >
-                <h2 className="text-lg font-semibold mb-4 text-foreground-primary flex items-center">
-                  <Info className="w-5 h-5 mr-2 text-primary" />
-                  Analysis Results
-                </h2>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-center justify-between">
-                    <span className="text-foreground-secondary">
-                      URL Reachable
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      {result.isReachable ? (
-                        <CheckCircle className="w-4 h-4 text-success" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-error" />
-                      )}
-                      {result.isReachable ? "Yes" : "No"}
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-foreground-secondary">
-                      Next.js Detected
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      {result.isNextJs ? (
-                        <CheckCircle className="w-4 h-4 text-success" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-error" />
-                      )}
-                      {result.isNextJs ? "Yes" : "No"}
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-foreground-secondary">
-                      React Server Components
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      {result.hasRSC ? (
-                        <CheckCircle className="w-4 h-4 text-success" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-muted" />
-                      )}
-                      {result.hasRSC ? "Yes" : "No"}
-                    </span>
-                  </li>
-                  {result.details.length > 0 && (
-                    <li className="mt-4 pt-4 border-t border-subtle">
-                      <p className="font-medium text-foreground-secondary mb-2">
-                        Details:
-                      </p>
-                      <ul className="list-disc list-inside text-foreground-muted space-y-1.5 text-xs">
-                        {result.details.map((detail, index) => (
-                          <li key={index}>{detail}</li>
-                        ))}
-                      </ul>
-                    </li>
-                  )}
-                </ul>
-              </motion.div>
-            )}
+            {result && !isLoading && <AnalysisResultsCard result={result} />}
           </AnimatePresence>
         </div>
       </div>

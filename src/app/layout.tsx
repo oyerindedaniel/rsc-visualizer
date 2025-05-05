@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "antialiased min-h-dvh h-full bg-background text-foreground font-inter",
+          "antialiased min-h-dvh h-full bg-background text-foreground font-mono",
           fontVariables
         )}
       >
