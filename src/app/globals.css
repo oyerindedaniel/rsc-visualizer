@@ -45,6 +45,16 @@
 
   /* Shadows */
   --shadow-color: oklch(0 0 0 / 0.1); /* Subtle shadow color */
+
+  /* Grid Pattern */
+  --grid-size: 40px;
+  --grid-line-color-light: oklch(0.85 0 0 / 0.1);
+  --grid-bg-color-light: var(--surface-primary);
+
+  /* Cross */
+  --cross-color-light: oklch(0.7 0 0 / 0.3);
+  --cross-size: 10px;
+  --cross-thickness: 1px;
 }
 
 [data-theme="dark"] {
@@ -90,6 +100,15 @@
 
   /* Shadows */
   --shadow-color: oklch(0 0 0 / 0.3); /* More pronounced shadow color */
+
+  /* Grid Pattern */
+  --grid-line-color-dark: oklch(
+    0.35 0 0 / 0.15
+  ); /* Slightly more visible on dark */
+  --grid-bg-color-dark: var(--surface-primary);
+
+  /* Cross */
+  --cross-color-dark: oklch(0.5 0 0 / 0.4);
 }
 
 @theme inline {
@@ -179,4 +198,45 @@ body {
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
   background-color: oklch(0.6 0.01 240 / 0.7);
+}
+
+/* --- Custom Background Pattern --- */
+.grid-pattern-background {
+  --grid-line-color: var(--grid-line-color-light);
+  --grid-bg-color: var(--grid-bg-color-light);
+  background-color: var(--grid-bg-color);
+  background-image: linear-gradient(var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  position: relative;
+}
+
+[data-theme="dark"] .grid-pattern-background {
+  --grid-line-color: var(--grid-line-color-dark);
+  --grid-bg-color: var(--grid-bg-color-dark);
+}
+
+/* --- Cross Marker Style --- */
+.grid-cross {
+  position: absolute;
+  width: var(--cross-size);
+  height: var(--cross-size);
+  /* Position using top/left/right/bottom and calc() in the component */
+}
+
+.grid-cross::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  --cross-color: var(--cross-color-light);
+  background-image: linear-gradient(var(--cross-color), var(--cross-color)),
+    /* Vertical line */ linear-gradient(var(--cross-color), var(--cross-color)); /* Horizontal line */
+  background-size: var(--cross-thickness) 100%,
+    /* Vertical line thickness and full height */ 100% var(--cross-thickness); /* Horizontal line full width and thickness */
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+[data-theme="dark"] .grid-cross::before {
+  --cross-color: var(--cross-color-dark);
 }

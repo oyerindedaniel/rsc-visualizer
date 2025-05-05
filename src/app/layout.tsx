@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -30,6 +32,22 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Link
+            href="/"
+            className="fixed top-4 left-4 z-50 flex items-center gap-2 group"
+          >
+            <Image
+              src="/next.svg"
+              alt="Next.js Logo"
+              width={24}
+              height={24}
+              className="dark:invert group-hover:scale-110 transition-transform duration-200"
+            />
+            <span className="text-sm font-semibold text-foreground-primary group-hover:text-primary transition-colors">
+              RSC Visualizer
+            </span>
+          </Link>
+
           {children}
           <ModeToggler />
           <Toaster />

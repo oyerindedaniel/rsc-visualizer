@@ -69,8 +69,17 @@ export default function HomePage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-grow p-4 overflow-y-auto">
-        <div className="flex flex-col items-center h-full gap-6 max-w-2xl mx-auto">
+      <div className="flex-grow p-4 overflow-y-auto grid-pattern-background relative">
+        <div
+          className="grid-cross"
+          style={{
+            left: `calc(3 * var(--grid-size) - (var(--cross-size) / 2))`,
+            top: `calc(4 * var(--grid-size) - (var(--cross-size) / 2))`,
+          }}
+          aria-hidden="true"
+        />
+
+        <div className="flex flex-col items-center h-full gap-6 max-w-2xl mx-auto relative z-10">
           <p className="text-foreground-muted text-center mt-20 shrink-0 tracking-[-0.03em]">
             Enter a Next.js URL below to begin analysis.
           </p>
