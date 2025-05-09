@@ -2,7 +2,7 @@
  * Logger utility that only logs in development mode
  */
 
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "production";
 
 const logger = {
   log: (...args: unknown[]) => {
