@@ -1,7 +1,7 @@
 import { Page, CDPSession, Protocol } from "puppeteer";
 import logger from "@/utils/logger";
 import { puppeteerService } from "./puppeteer-service";
-import { NAVIGATION_TIMEOUT } from "@/app/config/app";
+import { NAVIGATION_TIMEOUT } from "@/config/app";
 import { normalizeAppError } from "@/utils/errors";
 import { rscParser } from "./rsc-parser";
 import type {
