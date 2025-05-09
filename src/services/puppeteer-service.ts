@@ -1,6 +1,6 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import logger from "@/utils/logger";
-import { NAVIGATION_TIMEOUT } from "@/app/config/app";
+import { NAVIGATION_TIMEOUT } from "@/config/app";
 
 /**
  * Singleton service to manage Puppeteer browser instance
@@ -77,4 +77,4 @@ class PuppeteerService {
   }
 }
 
-export const puppeteerService = new PuppeteerService();
+export default PuppeteerService;

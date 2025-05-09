@@ -1,7 +1,7 @@
 import { Page, CDPSession, Protocol } from "puppeteer";
 import logger from "@/utils/logger";
-import { puppeteerService } from "./puppeteer-service";
-import { NAVIGATION_TIMEOUT } from "@/app/config/app";
+import PuppeteerService from "./puppeteer-service";
+import { NAVIGATION_TIMEOUT } from "@/config/app";
 import { normalizeAppError } from "@/utils/errors";
 import { rscParser } from "./rsc-parser";
 import type {
@@ -67,6 +67,7 @@ export class PageAnalyzerService {
     const scriptSourcesDuringLoad: string[] = [];
 
     try {
+      const puppeteerService = new PuppeteerService();
       page = await puppeteerService.newPage();
       client = await page.createCDPSession();
 
@@ -455,4 +456,4 @@ export class PageAnalyzerService {
   }
 }
 
-export const pageAnalyzer = new PageAnalyzerService();
+export default PageAnalyzerService;
