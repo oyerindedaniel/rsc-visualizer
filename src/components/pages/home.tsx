@@ -2,62 +2,24 @@
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { SendHorizontal, Loader2, AlertCircle } from "lucide-react";
+import { SendHorizontal, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useRef, useState } from "react";
-import type { RSCValidationResult } from "@/services/rsc-detector";
-import logger from "@/utils/logger";
+import { useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { AnalysisResultsCard } from "../analysis-results-card";
+import { useResourceContext } from "@/contexts/resource-context";
+import GridCross from "../grid-cross";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<RSCValidationResult | null>(null);
+  const { result, isLoading, error, forceFresh, setForceFresh, runAnalysis } =
+    useResourceContext();
 
   const handleAnalyze = async () => {
     const url = inputRef.current?.value;
-    if (!url) {
-      setError("Please enter a URL");
-      setResult(null);
-      return;
-    }
-
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-      setError("Invalid URL format. Please include http:// or https://");
-      setResult(null);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(
-          data.details?.url?.[0] || data.error || "Failed to analyze URL"
-        );
-        logger.error("API Error:", data);
-      } else {
-        setResult(data as RSCValidationResult);
-      }
-    } catch (err) {
-      logger.error("Fetch Error:", err);
-      setError("An unexpected error occurred. Check the console.");
-    } finally {
-      setIsLoading(false);
+    if (url) {
+      runAnalysis(url);
     }
   };
 
@@ -70,13 +32,11 @@ export default function HomePage() {
   return (
     <div className="h-full flex flex-col">
       <div className="flex-grow p-4 overflow-y-auto grid-pattern-background relative">
-        <div
-          className="grid-cross"
+        <GridCross
           style={{
             left: `calc(3 * var(--grid-size) - (var(--cross-size) / 2))`,
             top: `calc(4 * var(--grid-size) - (var(--cross-size) / 2))`,
           }}
-          aria-hidden="true"
         />
 
         <div className="flex flex-col items-center h-full gap-6 max-w-2xl mx-auto relative z-10">
@@ -85,7 +45,7 @@ export default function HomePage() {
           </p>
 
           <AnimatePresence>
-            {result && !isLoading && <AnalysisResultsCard result={result} />}
+            {result && !isLoading && <AnalysisResultsCard />}
           </AnimatePresence>
         </div>
       </div>
@@ -112,6 +72,34 @@ export default function HomePage() {
             aria-invalid={!!error}
             aria-describedby={error ? "error-message" : undefined}
           />
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant={forceFresh ? "secondary" : "ghost"}
+                size="icon"
+                className="w-9 h-9 shrink-0"
+                aria-label={
+                  forceFresh
+                    ? "Force fresh request"
+                    : "Use cached request if available"
+                }
+                onClick={() => setForceFresh(!forceFresh)}
+                disabled={isLoading}
+              >
+                <RefreshCw
+                  className={cn("w-4 h-4", forceFresh && "text-primary")}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {forceFresh
+                ? "Always fetch fresh data (will reset JS chunk sizes)"
+                : "Use cached data when available"}
+            </TooltipContent>
+          </Tooltip>
+
           <Button
             type="submit"
             variant="default"
