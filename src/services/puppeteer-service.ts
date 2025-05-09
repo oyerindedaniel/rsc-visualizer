@@ -77,4 +77,4 @@ class PuppeteerService {
   }
 }
 
-export const puppeteerService = new PuppeteerService();
+export default PuppeteerService;
